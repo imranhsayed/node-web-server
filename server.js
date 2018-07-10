@@ -4,6 +4,13 @@ const hbs = require( 'hbs' );
 const fs = require( 'fs' );
 
 /**
+ * Grab a port from process.env (which is an object that store all of our environment variables as key:value pairs), called PORT,
+ * which heroku is going to set and set this PORT equal to port const.
+ * And if the process.env.PORT does not exist will set port equal to 3000
+ */
+const  port = process.env.PORT || 3000;
+
+/**
  * Make a new express app.
  * storing what is returned by express() int app variable.
  */
@@ -121,6 +128,6 @@ app.get( '/contact', ( req, res ) => {
  * app.listen() is going to bind this application to a port on ur machine
  * app.listen() takes an optional second param as a function which gets executed after the server is up.
  */
-app.listen( 3000, () => {
-	console.log( 'Server is up on Port 300' );
+app.listen( port, () => {
+	console.log( `Server is up on Port: ${port}` );
 } );
