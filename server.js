@@ -124,6 +124,12 @@ app.get( '/contact', ( req, res ) => {
 	res.send( 'This is Contact Page' );
 } );
 
+app.get( '/projects', ( req, res ) => {
+	res.render( 'projects.hbs', {
+		pageTitle: 'Projects Page',
+	} );
+} );
+
 /**
  * app.listen() is going to bind this application to a port on ur machine
  * app.listen() takes an optional second param as a function which gets executed after the server is up.
