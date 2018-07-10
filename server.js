@@ -1,11 +1,43 @@
 // require the express library.
 const express = require( 'express' );
+const hbs = require( 'hbs' );
 
 /**
  * Make a new express app.
  * storing what is returned by express() int app variable.
  */
 let app = express();
+
+/**
+ * hbs.registerPartials will let node know that we want to use partials for handlebars templates.
+ * We need to specify the absolute path to the directory in which we will keep all our partials as its par
+ */
+hbs.registerPartials( __dirname + '/views/partials' );
+
+/**
+ * registerHelper() are used to pass variables e.g. getCurrentYear to handlebar templates and their value will be equal
+ * to what is returned by the call back function here, in this case year
+ */
+hbs.registerHelper( 'getCurrentYear', () => {
+	return new Date().getFullYear();
+} );
+
+/**
+ * registerHelper() are used to pass variables e.g. screamOut to handlebar templates and their value will be equal
+ * to what is returned by the call back function here, in this case text in uppercase.
+ * You can also pass a variable to this call back function like we have passed text here and it will be available in hbs templates
+ * as {{ varName anotherVar }} e.g. {{ screamOut welcomeMessage }}
+ */
+hbs.registerHelper( 'screamOut', ( text ) => {
+	return text.toUpperCase();
+} );
+
+/**
+ * Sets express related configuration.
+ * We will set a key value pair here.
+ * 'view engine' is the key and the value is 'hbs', meaning the view engine we want to use is hbs.
+ */
+app.set( 'view engine', 'hbs' );
 
 /**
  * Define a middleware using app.use()
@@ -24,15 +56,21 @@ app.use( express.static( __dirname + '/public' ) );
 app.get( '/', ( req, res ) => {
 	// What ever you pass it here will be displayed on the http://localhost:3000
 	// res.send( '<h1>Hello express!</h1>' );
-	res.send({
-		name: 'Amy',
-		age: 32,
-		films: [ 'I', 'The Train' ]
-	});
+	res.render( 'home.hbs', {
+		pageTitle: 'About Page',
+		welcomeMessage: 'Welcome to home page'
+	} )
 } );
 
+/**
+ * Here res.render() will render the about.hbs page
+ * You can also pass an object as a second argument to res.render(), which will contain data that will be available to
+ * handlebar template about.hbs
+ */
 app.get( '/about', ( req, res ) => {
-	res.send( 'This is About Page' );
+	res.render( 'about.hbs', {
+		pageTitle: 'About Page',
+	} );
 } );
 
 app.get( '/contact', ( req, res ) => {
