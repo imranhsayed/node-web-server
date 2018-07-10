@@ -1,6 +1,7 @@
-// require the express library.
+// require the express, hbs and fs library.
 const express = require( 'express' );
 const hbs = require( 'hbs' );
+const fs = require( 'fs' );
 
 /**
  * Make a new express app.
@@ -38,6 +39,45 @@ hbs.registerHelper( 'screamOut', ( text ) => {
  * 'view engine' is the key and the value is 'hbs', meaning the view engine we want to use is hbs.
  */
 app.set( 'view engine', 'hbs' );
+
+/**
+ * Here we have defined another middleware using app.use(), which takes the req object, spits out some info
+ * like time of the request, request method(get/post) and request url( /, or /home or /about )
+ * next() is used when the middleware request is complete. If you don't call next() your application will never fire.
+ */
+app.use( ( req, res, next ) => {
+	// Date().toString() returns the formatted date string.
+	let now = new Date().toString();
+
+	/**
+	 * req.method gives you which HTTP method was used ( GET or POST ).
+	 * req.url gives you what url was accessed. ( /, or /home, or /about etc )
+	 */
+	let log =  `${ now }: ${ req.method } ${ req.url }`;
+	console.log( log );
+
+	/**
+	 * fs.appendFile() lets you add on to a file.
+	 * Here server.log is the filename we want to append/write to, if this file does not exist it will create one, else it will
+	 * append our message stored in log variable at the end of the file.
+	 * It also takes a call back function if which executes if the file appending fails.
+	 */
+	fs.appendFile( 'server.log', log + '\n', ( err ) => {
+		if ( err ) {
+		    console.log( 'Unable to append to server.log' );
+		}
+	} );
+	next();
+} );
+
+/**
+ * Create a middleware using app.use().
+ * Anyone who lands to the any url on your site will see content rendered by maintenance.hbs template and will not
+ * be allowed to continue on
+ */
+// app.use( ( req, res, next ) => {
+// 	res.render( 'maintenance.hbs' );
+// } );
 
 /**
  * Define a middleware using app.use()
